@@ -1,4 +1,4 @@
-import type { Metadata } from "next""use client";
+import type { Metadata } from "next";
 import Nav    from "@/components/layout/Nav";
 import Footer from "@/components/layout/Footer";
 import { buildMetadata } from "@/lib/seo";
