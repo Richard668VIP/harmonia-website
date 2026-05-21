@@ -84,8 +84,6 @@ export default function PillarsPage() {
             <a key={p.id} href={`/pillars/${p.slug}`}
               className="bg-cream border border-border rounded-[20px] p-7 transition-all duration-300 hover:-translate-y-1.5 cursor-pointer group"
               style={{ borderTop:`3px solid transparent` }}
-              onMouseOver={e=>(e.currentTarget.style.borderTopColor=p.color)}
-              onMouseOut={e=>(e.currentTarget.style.borderTopColor="transparent")}>
               <div className="text-[36px] mb-4" style={{ color:p.color }}>{p.icon}</div>
               <div className="font-label text-[9.5px] tracking-[.2em] uppercase mb-2" style={{ color:p.color }}>
                 {String(p.id).padStart(2,"0")} · Pillar
