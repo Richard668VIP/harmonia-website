@@ -1,113 +1,84 @@
 "use client";
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { PILLARS } from "@/lib/utils";
 
 const NAV_ITEMS = [
-  { label: "The Five Pillars", href: "/pillars",
-    sub: PILLARS.map(p => ({ label: p.en, href: `/pillars/${p.slug}` })) },
-  { label: "Courses", href: "/courses",
-    sub: [
-      { label: "All Courses",           href: "/courses" },
-      { label: "Free Starter Pack",     href: "/courses/free-starter-pack" },
-      { label: "The Integration System",href: "/courses/the-integration-system" },
-      { label: "1:1 Coaching",          href: "/courses/coaching" },
-    ] },
-  { label: "Shop",    href: "/shop"    },
-  { label: "Learn",   href: "/blog"    },
-  { label: "About",   href: "/about"   },
+  { label: "The Five Pillars", href: "/pillars" },
+  { label: "Courses",          href: "/courses" },
+  { label: "Shop",             href: "/shop"    },
+  { label: "Learn",            href: "/blog"    },
+  { label: "About",            href: "/about"   },
 ];
 
 export default function Nav({ activePage }: { activePage?: string }) {
-  const [scrolled, setScrolled]   = useState(false);
-  const [openMenu, setOpenMenu]   = useState<string | null>(null);
+  const [scrolled, setScrolled]     = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
 
   useEffect(() => {
-    const handler = () => setScrolled(window.scrollY > 40);
-    window.addEventListener("scroll", handler, { passive: true });
-    return () => window.removeEventListener("scroll", handler);
+    const h = () => setScrolled(window.scrollY > 40);
+    window.addEventListener("scroll", h, { passive: true });
+    return () => window.removeEventListener("scroll", h);
   }, []);
 
   return (
     <>
       {/* Announcement bar */}
-      <div className="bg-deep text-center py-[11px] px-5 text-[13px] tracking-[.04em]"
-           style={{ color: "#F0DFA0" }}>
+      <div style={{ background:"#0D1810", color:"#F0DFA0", textAlign:"center", padding:"11px 20px", fontSize:13, letterSpacing:".04em" }}>
         ✦ &nbsp; New: Free 7-Day Starter Pack — Begin Your Journey Today &nbsp;
-        <Link href="/courses/free-starter-pack" className="underline cursor-pointer">
+        <Link href="/courses/free-starter-pack" style={{ color:"#F0DFA0", textDecoration:"underline" }}>
           Claim Free Access →
         </Link>
       </div>
 
-      <nav className={`sticky top-0 z-50 border-b border-border backdrop-blur-md transition-all duration-300 ${
-        scrolled ? "bg-cream/96" : "bg-cream"
-      }`}>
-        <div className="max-w-[1280px] mx-auto px-7 flex items-center justify-between h-[68px]">
+      {/* Nav */}
+      <nav style={{ background: scrolled ? "rgba(250,247,242,0.96)" : "#FAF7F2", borderBottom:"1px solid #D5E2D8", position:"sticky", top:0, zIndex:100, backdropFilter:"blur(12px)", transition:"background .3s" }}>
+        <div style={{ maxWidth:1280, margin:"0 auto", padding:"0 28px", display:"flex", alignItems:"center", justifyContent:"space-between", height:68 }}>
+
           {/* Logo */}
-          <Link href="/" className="flex items-center gap-2.5">
+          <Link href="/" style={{ display:"flex", alignItems:"center", gap:10, textDecoration:"none" }}>
             <svg width="26" height="26" viewBox="0 0 34 34" fill="none">
-              {[[-68,.5],[-36,.75],[0,.92],[36,.75],[68,.5]].map(([a,op]) => (
-                <ellipse key={a} cx={17} cy={21-8*.28} rx={4.5} ry={8}
-                  fill="#2D6A4F" opacity={op} transform={`rotate(${a} 17 21)`}/>
+              {([[-68,.5],[-36,.75],[0,.92],[36,.75],[68,.5]] as [number,number][]).map(([a,op]) => (
+                <ellipse key={a} cx={17} cy={17} rx={4.5} ry={8} fill="#2D6A4F" opacity={op} transform={`rotate(${a} 17 21)`}/>
               ))}
-              <circle cx={17} cy={21-8*.14} r={8*.22} fill="#2D6A4F" opacity={.92}/>
+              <circle cx={17} cy={19} r={3.5} fill="#2D6A4F" opacity={.92}/>
             </svg>
             <div>
-              <div className="font-display text-[21px] font-semibold text-ink leading-none">Harmonia</div>
-              <div className="text-[9px] tracking-[.18em] text-muted uppercase">寰宇心流</div>
+              <div style={{ fontFamily:"Georgia,serif", fontSize:20, fontWeight:600, color:"#181E16", lineHeight:1 }}>Harmonia</div>
+              <div style={{ fontSize:9, letterSpacing:".18em", color:"#6A7A6D", textTransform:"uppercase" }}>寰宇心流</div>
             </div>
           </Link>
 
-          {/* Desktop nav */}
-          <div className="hidden lg:flex gap-8 items-center">
+          {/* Desktop nav — hidden on mobile */}
+          <div style={{ display:"flex", gap:28, alignItems:"center" }}
+               className="hidden-mobile">
             {NAV_ITEMS.map(item => (
-              <div key={item.href} className="relative"
-                onMouseEnter={() => item.sub && setOpenMenu(item.label)}
-                onMouseLeave={() => setOpenMenu(null)}>
-                <Link href={item.href}
-                  className={`text-[13.5px] font-medium tracking-[.02em] transition-colors hover:text-jade pb-0.5 border-b border-transparent hover:border-gold ${
-                    activePage === item.href ? "text-jade border-gold" : "text-ink"
-                  }`}>
-                  {item.label}
-                  {item.sub && <span className="text-[9px] ml-0.5 opacity-50">▾</span>}
-                </Link>
-                {item.sub && openMenu === item.label && (
-                  <div className="absolute top-[calc(100%+10px)] left-1/2 -translate-x-1/2 bg-cream border border-border rounded-xl py-2 min-w-[210px] shadow-lg z-[200]">
-                    {item.sub.map(s => (
-                      <Link key={s.href} href={s.href}
-                        className="block px-5 py-2.5 text-[13.5px] text-brown hover:bg-parchment transition-colors">
-                        {s.label}
-                      </Link>
-                    ))}
-                  </div>
-                )}
-              </div>
+              <Link key={item.href} href={item.href}
+                style={{ fontSize:14, fontWeight:500, color: activePage===item.href ? "#2D6A4F" : "#181E16", textDecoration:"none", letterSpacing:".02em" }}>
+                {item.label}
+              </Link>
             ))}
           </div>
 
-          {/* Right */}
-          <div className="flex gap-3.5 items-center">
-            <span className="text-muted text-base cursor-pointer hidden sm:block">⌕</span>
-            <span className="text-[11.5px] text-muted border border-border px-3 py-1 rounded-full cursor-pointer hidden sm:block">
-              EN / 中文
-            </span>
+          {/* Right side */}
+          <div style={{ display:"flex", gap:12, alignItems:"center" }}>
             <Link href="/courses/free-starter-pack"
-              className="btn-gold !py-[10px] !px-[22px] !text-[13.5px]">
+              style={{ background:"linear-gradient(135deg,#C9A84C,#E0C06A)", color:"#0D1810", border:"none", cursor:"pointer", padding:"10px 22px", borderRadius:8, fontWeight:600, fontSize:14, textDecoration:"none", display:"inline-flex", alignItems:"center", gap:6 }}>
               Begin Free →
             </Link>
-            {/* Mobile hamburger */}
-            <button className="lg:hidden text-ink text-xl"
-              onClick={() => setMobileOpen(v => !v)}>☰</button>
+            <button onClick={() => setMobileOpen(v => !v)}
+              style={{ background:"none", border:"none", cursor:"pointer", fontSize:22, color:"#181E16", display:"none" }}
+              className="mobile-menu-btn">
+              ☰
+            </button>
           </div>
         </div>
 
-        {/* Mobile nav */}
+        {/* Mobile menu */}
         {mobileOpen && (
-          <div className="lg:hidden bg-cream border-t border-border px-7 py-4">
+          <div style={{ background:"#FAF7F2", borderTop:"1px solid #D5E2D8", padding:"8px 28px 16px" }}>
             {NAV_ITEMS.map(item => (
               <Link key={item.href} href={item.href}
-                className="block py-3 text-[15px] text-brown border-b border-border last:border-0"
+                style={{ display:"block", padding:"12px 0", fontSize:15, color:"#3C2D18", textDecoration:"none", borderBottom:"1px solid #D5E2D8" }}
                 onClick={() => setMobileOpen(false)}>
                 {item.label}
               </Link>
@@ -115,6 +86,13 @@ export default function Nav({ activePage }: { activePage?: string }) {
           </div>
         )}
       </nav>
+
+      <style>{`
+        @media (max-width: 1024px) {
+          .hidden-mobile { display: none !important; }
+          .mobile-menu-btn { display: block !important; }
+        }
+      `}</style>
     </>
   );
 }
